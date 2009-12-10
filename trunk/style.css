@@ -1,0 +1,46 @@
+/* 
+    Document   : style
+    Created on : 28-apr-2009, 15.53.07
+    Author     : gpantanetti
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+    color: #2e3436;
+    font: 12px serif;
+}
+
+root { 
+    display: block;
+}
+
+table {
+    background: #fff;
+    margin: 10px 0;
+}
+
+td {
+    text-align: center;
+    padding: 4px 8px;
+}
+
+form {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-top: 0;
+    padding: 10px;
+}
+
+div.section h2 {
+    background: url('icons/section_expanded') #eee no-repeat left center;
+    border: 1px solid #ccc;
+    border-bottom: 0;
+    padding: 2px 0 2px 30px;
+    margin: 4px 0 0 0;
+}
+
+div.section h2.not_visible {
+    background: url('icons/section_collapsed') #eee no-repeat left center;
+    border: 1px solid #ccc;
+}
