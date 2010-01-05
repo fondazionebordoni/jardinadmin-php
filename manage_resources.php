@@ -203,30 +203,9 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_w" value="1" <?php if($deleteperm==1) print "checked=\"checked\""; ?> /></td>
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_m" value="1" <?php if($modifyperm==1) print "checked=\"checked\""; ?> /></td>
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_i" value="1" <?php if($insertperm==1) print "checked=\"checked\""; ?> /></td>
-                    <td><?php
-                    if($resource_header!="") {
-                        echo "<select name=\"c_{$resource_id}_h\">";
-                        echo "<option";
-                        if($resource_header==0) echo " selected";
-                        echo ">0</option>";
-                        echo "<option";
-                        if($resource_header==1) echo " selected";
-                        echo ">1</option>";
-                        echo "</select>";
-                    }
-                    ?></td>
-                    <td><?php
-                    if($resource_search!="") {
-                        echo "<select name=\"c_{$resource_id}_s\">";
-                        echo "<option";
-                        if($resource_search==0) echo " selected";
-                        echo ">0</option>";
-                        echo "<option";
-                        if($resource_search==1) echo " selected";
-                        echo ">1</option>";
-                        echo "</select>";
-                    }
-                    ?></td>
+						  <td><?php if($resource_header!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_h" value="1" <?php if($resource_header==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
+                    <td><?php if($resource_search!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_s" value="1" <?php if($resource_search==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
+                    
                     <td><?php
                     if($resource_grouping!="") {
                         echo "<select name=\"c_{$resource_id}_g\">";
