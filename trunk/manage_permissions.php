@@ -49,6 +49,8 @@ include_once 'include/db_utils.php';
             $header = $resource['h'];
             $search = $resource['s'];
             $grouping=$resource['g'];
+            if($search=="") $search = 0;
+			   if($header=="") $header = 0;
             echo "<pre>Inserting $id ($alias) permissions [$r$w$m$i] ... ";
             // cancello eventuali permessi inseriti precedentemente
             $connection = db_get_connection();
