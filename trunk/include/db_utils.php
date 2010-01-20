@@ -447,6 +447,30 @@ function get_resultsets() {
     return $results;
 }
 
+
+function get_resultset_name($resultset_id) {
+    global $T_RESOURCE, $T_RESULTSET;
+    $connection = db_get_connection();
+
+    $query = "SELECT r.name as `name` FROM $T_RESULTSET rs JOIN $T_RESOURCE r ".
+        "ON (r.id = rs.id) WHERE rs.id=".$resultset_id;
+
+    /* Esegui la query */
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+    $i = 0;
+    while($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $name = $row['name'];
+    }
+
+    mysql_free_result($result);
+    mysql_close($connection);
+
+    return $name;
+}
+
+
 function get_toolbar_from_ids($resultset_id, $group_id) {
     global $T_TOOLBAR;
 
