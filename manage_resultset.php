@@ -24,6 +24,7 @@ include_once 'include/db_utils.php';
 
             /* Esegui query per prendere i campi dal resultset */
             $resource_fields = get_fields_from_query($resultset_statement);
+//            $resource_fields = get_fields_from_query($resultset_name);
 
             /* Inserisci il resultset in resources e prendine l'id */
             $resultset_id = insert_resource($resultset_name, $resultset_alias);
