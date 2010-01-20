@@ -22,7 +22,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             function checkTutti() {
                 with (document.Users) {
                     for (var i=0; i < elements.length; i++) {
-                        if (elements[i].type == 'checkbox')
+                        if (elements[i].type == 'checkbox' && elements[i].disabled == false)
                             elements[i].checked = true;
                     }
                 }
@@ -60,6 +60,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 
             /* Esegui query per prendere i campi dal resultset */
             $resource_fields = get_fields_from_query($resultset_statement);
+//            $resource_fields = get_fields_from_query($resultset_name);
 
             /*
             * TODO questa parte deve essere eseguita dopo la fase che permette
@@ -172,10 +173,20 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 
                 $connection = db_get_connection();
 
+                if ( isset ($_POST['resultset_name'])) {
+                    $table_type = get_table_type($_POST['resultset_name']);
+                }
+
+
                 foreach ($resource_list as $resource) {
                     $resource_name = $resource->get_name();
                     $resource_alias = $resource->get_alias();
                     $resource_id = $resource->get_id();
+
+                    if ( $resource_id == $_POST['resultset_id']) {
+                       $table_type = get_table_type($resource_name);
+                    }
+
                     $resource_type = $resource->get_type();
                     $resource_def = $resource->get_def();
                     $resource_header = $resource->get_header();
@@ -200,10 +211,10 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     <td><?= $resource_type ?></td>
                     <td><?= $resource_def ?></td>
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_r" value="1" <?php if($readperm==1) print "checked=\"checked\""; ?> /></td>
-                    <td><input type="checkbox" name="c_<?= $resource_id ?>_w" value="1" <?php if($deleteperm==1) print "checked=\"checked\""; ?> /></td>
-                    <td><input type="checkbox" name="c_<?= $resource_id ?>_m" value="1" <?php if($modifyperm==1) print "checked=\"checked\""; ?> /></td>
-                    <td><input type="checkbox" name="c_<?= $resource_id ?>_i" value="1" <?php if($insertperm==1) print "checked=\"checked\""; ?> /></td>
-						  <td><?php if($resource_header!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_h" value="1" <?php if($resource_header==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
+                    <td><input type="checkbox" name="c_<?= $resource_id ?>_w" value="1" <?php if($deleteperm==1) print "checked=\"checked\""; ?> <?php if($table_type=='View') print " disabled"; ?> /></td>
+                    <td><input type="checkbox" name="c_<?= $resource_id ?>_m" value="1" <?php if($modifyperm==1) print "checked=\"checked\""; ?> <?php if($table_type=='View') print " disabled"; ?> /></td>
+                    <td><input type="checkbox" name="c_<?= $resource_id ?>_i" value="1" <?php if($insertperm==1) print "checked=\"checked\""; ?> <?php if($table_type=='View') print " disabled"; ?> /></td>
+                    <td><?php if($resource_header!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_h" value="1" <?php if($resource_header==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
                     <td><?php if($resource_search!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_s" value="1" <?php if($resource_search==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
                     
                     <td><?php

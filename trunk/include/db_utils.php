@@ -561,6 +561,51 @@ function get_fields_from_query($query) {
     return $results;
 }
 
+
+function get_table_type($resultset_name) {
+    $connection = db_get_connection();
+
+    $query = "SHOW CREATE TABLE `".$resultset_name. "`";
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+//    $type = 'Table';
+    // interessa solo il primo campo
+    $row = mysql_fetch_field($result);
+    if ($row) {
+        $type = $row->name;
+    }
+
+    return $type;
+
+}
+//function get_fields_from_query($table_name) {
+//    $connection = db_get_connection();
+//
+//    /* Definizione query -> uguale a statement */
+//
+//    /* Esegui la query */
+//    $query = "SHOW COLUMNS FROM `". $table_name ."`";
+//    $result = mysql_query($query)
+//        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+//
+//    $results = array();
+//    $i = 0;
+//    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+//        
+//        /* Inserisci il nome del campo nei risultati */
+//        $results[$i++] =
+//            new Resource(null, $row['Field'], null, $row['Type'], $row['Default'], null, null, null);
+//    }
+//
+//    //mysql_free_result($result);
+//    mysql_close($connection);
+//
+//    /* Ritorna i risultati */
+//    return $results;
+//}
+
+
 function print_result_metadata($result) {
     $i = 0;
     while ($i < mysql_num_fields($result)) {
