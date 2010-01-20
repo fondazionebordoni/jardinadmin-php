@@ -173,8 +173,9 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 
                 $connection = db_get_connection();
 
-                if ( isset ($_POST['resultset_name'])) {
-                    $table_type = get_table_type($_POST['resultset_name']);
+                if ( isset ($_POST['resultset_id'])) {
+                    $tab_name = get_resultset_name($_POST['resultset_id']);
+                    $table_type = get_table_type($tab_name);
                 }
 
 
@@ -182,11 +183,6 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     $resource_name = $resource->get_name();
                     $resource_alias = $resource->get_alias();
                     $resource_id = $resource->get_id();
-
-                    if ( $resource_id == $_POST['resultset_id']) {
-                       $table_type = get_table_type($resource_name);
-                    }
-
                     $resource_type = $resource->get_type();
                     $resource_def = $resource->get_def();
                     $resource_header = $resource->get_header();
@@ -214,11 +210,11 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_w" value="1" <?php if($deleteperm==1) print "checked=\"checked\""; ?> <?php if($table_type=='View') print " disabled"; ?> /></td>
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_m" value="1" <?php if($modifyperm==1) print "checked=\"checked\""; ?> <?php if($table_type=='View') print " disabled"; ?> /></td>
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_i" value="1" <?php if($insertperm==1) print "checked=\"checked\""; ?> <?php if($table_type=='View') print " disabled"; ?> /></td>
-                    <td><?php if($resource_header!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_h" value="1" <?php if($resource_header==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
-                    <td><?php if($resource_search!="") { ?><input type="checkbox" name="c_<?= $resource_id ?>_s" value="1" <?php if($resource_search==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
+                    <td><?php if($resource_id != $_POST['resultset_id']) { ?><input type="checkbox" name="c_<?= $resource_id ?>_h" value="1" <?php if($resource_header==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
+                    <td><?php if($resource_id != $_POST['resultset_id']) { ?><input type="checkbox" name="c_<?= $resource_id ?>_s" value="1" <?php if($resource_search==1) print "checked=\"checked\""; ?> /> <?php } ?></td>
                     
                     <td><?php
-                    if($resource_grouping!="") {
+                    if($resource_id != $_POST['resultset_id']) {
                         echo "<select name=\"c_{$resource_id}_g\">";
                         foreach ($array_grouping as $ke => $va) {
                             echo "<option value=\"$ke\"";
@@ -253,7 +249,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             <input type=button onclick="uncheckTutti()" value="Deseleziona tutti" />
         </form>
         <?php
-        mysql_close($connection);
+//        mysql_close($connection);
         //        }
         ?>
     </body>
