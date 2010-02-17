@@ -27,15 +27,34 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title></title>
         <link rel="stylesheet" type="text/css" href="include/superfish/css/superfish.css" media="screen">
-		<script type="text/javascript" src="include/superfish/js/jquery-1.2.6.min.js"></script>
-		<script type="text/javascript" src="include/superfish/js/hoverIntent.js"></script>
-		<script type="text/javascript" src="include/superfish/js/superfish.js"></script>
+        <link rel="stylesheet" type="text/css" href="include/superfish/css/superfish-navbar.css" media="screen">
+<!--        <link href="include/js/style.css" rel="stylesheet" type="text/css" media="screen" />-->
+        <link href="style2.css" rel="stylesheet" type="text/css" media="screen" />
+	<script type="text/javascript" src="include/js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="include/js/jquery/jquery.main.js"></script>
+        <script type="text/javascript" src="include/superfish/js/jquery-1.2.6.min.js"></script>
+        <script type="text/javascript" src="include/superfish/js/hoverIntent.js"></script>
+        <script type="text/javascript" src="include/superfish/js/superfish.js"></script>
         <script type="text/javascript"> 
 
             $(document).ready(function(){ 
                 $("ul.sf-menu").superfish(); 
             }); 
 
+        </script>
+        <script type="text/javascript">
+            
+            $(document).ready(function(){
+
+             $('#menu a').click(function() {
+               var page = $(this).attr('href');
+               if ( page != '#') {
+                   $('#content').load( page ).slideDown();
+                   return false;
+               }
+             });
+
+            });
         </script>
 <!--
         <link rel="stylesheet" type="text/css" href="style.css" />
@@ -95,52 +114,66 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
 <!--        <div class="section">
             <h1>Gestione Resultset</h1>
 -->
+
+    <div id="menu">
+        <ul id="sample-menu-4" class="sf-menu sf-navbar">
+                <li>
+                        <a class="sf-with-ul" href="#">Gestione Resultset<span class="sf-sub-indicator"> &#187;</span></a>
+                        <ul>
+                            <li><a href="forms/rs_creation_permissions.php">Creazione con permessi</a></li>
+                            <li><a href="forms/rs_manage_resultset.php">Creazione</a></li>
+                            <li><a href="forms/manage_resultset.php">Eliminazione</a></li>
+                        </ul>
+                </li>
+                <li>
+                        <a class="sf-with-ul" href="#">Gestione Permessi<span class="sf-sub-indicator"> &#187;</span></a>
+                        <ul>
+                            <li><a href="#">Permessi per Gruppo</a></li>
+                        </ul>
+                </li>
+                <li>
+                        <a class="sf-with-ul" href="#">Gestione Utenti<span class="sf-sub-indicator"> &#187;</span></a>
+                        <ul>
+                            <li><a href="#">Creazione</a>
+                            <li><a href="#">Modifica</a>
+                            <li><a href="#">Eliminazione</a>
+                        </ul>
+                </li>
+                <li>
+                        <a class="sf-with-ul" href="#">Gestione Gruppi<span class="sf-sub-indicator"> &#187;</span></a>
+                        <ul>
+                            <li><a href="#">Creazione</a></li>
+                            <li><a href="#">Modifica</a></li>
+                            <li><a href="#">Eliminazione</a></li>
+                        </ul>
+                </li>
+                <li>
+                        <a class="sf-with-ul" href="#">Gestione Raggruppamenti<span class="sf-sub-indicator"> &#187;</span></a>
+                        <ul>
+                            <li><a href="#">Creazione</a></li>
+                            <li><a href="#">Modifica</a></li>
+                            <li><a href="#">Eliminazione</a></li>
+                        </ul>
+                </li>
+                <li>
+                        <a class="sf-with-ul" href="#">Gestione Notifiche<span class="sf-sub-indicator"> &#187;</span></a>
+                        <ul>
+                            <li><a href="#">Creazione</a></li>
+                            <li><a href="#">Modifica</a></li>
+                            <li><a href="#">Eliminazione</a></li>
+                        </ul>
+                </li>
+        </ul>
+    </div>
+<!--
+        <div id="menu">
             <ul id="resultset" class="sf-menu">
                 <li class="current">
-                    <a href="#a">Gestione Resultset</a>
+                    <a href="#">Gestione Resultset</a>
                         <ul>
-                            <li><a href="#aa">Creazione Resultset con impostazione permessi</a>
-                                <UL><LI>
-                                       <form action="manage_resources.php" method="POST">
-                                            <input type="hidden" name="action" value="new" />
-                                            name: <input type="text" name="resultset_name" /><br>
-                                            alias: <input type="text" name="resultset_alias" /><br>
-                                            statement: <input type="text" name="resultset_statement" />
-                                            </p>
-                                            <input type="submit" value="Submit" />
-                                        </form> 
-                                    </LI></UL>
-                            </li>
-                            <li><a href="#aa">Creazione Resultset</a>
-                                <ul><li>
-                                        <form action="manage_resultset.php" method="POST">
-                                            <input type="hidden" name="action" value="new" />
-                                            name: <input type="text" name="resultset_name" /><br>
-                                            alias: <input type="text" name="resultset_alias" /><br>
-                                            statement: <input type="text" name="resultset_statement" /><br>
-                                                            </p>
-                                            <input type="submit" value="Submit" />
-                                        </form>
-                                    </li></ul>
-                            </li>
-                            <li><a href="#aa">Eliminazione Resultset</a>
-                                <ul><li>
-                                        <form action="manage_resultset.php" method="POST">
-                                            <input type="hidden" name="action" value="delete" />
-                                            <select name="resultset_id">
-                                                <?php foreach ($resultsets as $resultset) {
-                                                    $id = $resultset->get_id();
-                                                    $name = $resultset->get_alias();
-                                                    ?>
-                                                <option value="<?php echo $id ?>">
-                                                        <?php echo $name; ?>
-                                                </option>
-                                                <?php } ?>
-                                            </select>
-                                            <input type="submit" value="Submit" />
-                                        </form>
-                                    </li></ul>
-                            </li>
+                            <li><a href="forms/rs_creation_permissions.php">Creazione Resultset con impostazione permessi</a></li>
+                            <li><a href="forms/rs_manage_resultset.php">Creazione Resultset</a></li>
+                            <li><a href="forms/rs_delete_resultset.php">Eliminazione Resultset</a></li>
                         </ul>
                 </li>
             </ul>
@@ -183,7 +216,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="submit" value="Submit" />
             </form>
         </div>
--->
+
             <ul id="permessi" class="sf-menu">
                 <li class="current">
                     <a href="#a">Gestione Permessi</a>
@@ -215,6 +248,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
         </div>
 -->
 <!--        <div class="section"> -->
+<!--
         <?php
         $groups = get_groups();
         $users = get_users();
@@ -291,6 +325,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                         </ul>
                 </li>
             </ul>
+-->
 <!--            <h1>Gestione Utenti</h1>
 
             <h2>Creazione Utente</h2>
@@ -352,7 +387,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="submit" value="Submit" />
             </form>
         </div>
--->
+
             <ul id="gruppo" class="sf-menu">
                 <li class="current">
                     <a href="#a">Gestione Gruppi</a>
@@ -411,7 +446,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="submit" value="Submit" />
             </form>
         </div>
--->
+
 
             <ul id="raggruppamento" class="sf-menu">
                 <li class="current">
@@ -470,7 +505,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="submit" value="Submit" />
             </form>
         </div>
--->
+
             <ul id="notifica" class="sf-menu">
                 <li class="current">
                     <a href="#a">Gestione Notifiche</a>
@@ -525,6 +560,12 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="submit" value="Submit" />
             </form>
 		</div>
+    </div>
+
 -->
-    </body>
+<br>
+<div id="content"></div>
+
+</body>
+
 </html>

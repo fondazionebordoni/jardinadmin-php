@@ -1,0 +1,40 @@
+/* 
+    Document   : style2
+    Created on : 21-gen-2010, 10.29.18
+    Author     : acozzolino
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+table {
+    background: #fff;
+    margin: 10px 0;
+}
+
+td {
+    text-align: center;
+    padding: 4px 8px;
+}
+
+form {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-top: 0;
+    padding: 10px;
+}
+
+#content {
+    position:absolute;
+    left:4px;
+    top:20%;
+    text-align: left;
+}

@@ -36,6 +36,23 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     }
                 }
             }
+
+            function setReadOnly() {
+                with (document.Users) {
+                    for (var i=0; i < elements.length; i++) {
+                        if (elements[i].type == 'checkbox')
+                            var check_type = elements[i].name.split("_");
+                            alert(check_type.length);
+                            for ( var j = 0; j < check_type.length; j++ ) {
+                                alert(check_type[j]);
+                            }
+//                            alert("tt" + check_type);
+                            if (check_type[2] == 'r') {
+                                elements[i].checked = true;
+                            }
+                    }
+                }
+            }
         </script>
     </head>
     <body>
@@ -247,6 +264,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             <input type="submit" value="Submit" />
             <input type=button onclick="checkTutti()" value="Seleziona tutti" />
             <input type=button onclick="uncheckTutti()" value="Deseleziona tutti" />
+            <input type=button onclick="setReadOnly()" value="sola lettura" />
         </form>
         <?php
 //        mysql_close($connection);
