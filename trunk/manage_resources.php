@@ -40,16 +40,77 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             function setReadOnly() {
                 with (document.Users) {
                     for (var i=0; i < elements.length; i++) {
-                        if (elements[i].type == 'checkbox')
+                        if (elements[i].type == 'checkbox') {
                             var check_type = elements[i].name.split("_");
-                            alert(check_type.length);
-                            for ( var j = 0; j < check_type.length; j++ ) {
-                                alert(check_type[j]);
-                            }
-//                            alert("tt" + check_type);
                             if (check_type[2] == 'r') {
                                 elements[i].checked = true;
                             }
+                        }
+                    }
+                }
+            }
+
+            function setDeleteOnly() {
+                with (document.Users) {
+                    for (var i=0; i < elements.length; i++) {
+                        if (elements[i].type == 'checkbox') {
+                            var check_type = elements[i].name.split("_");
+                            if (check_type[2] == 'w') {
+                                elements[i].checked = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function setModifyOnly() {
+                with (document.Users) {
+                    for (var i=0; i < elements.length; i++) {
+                        if (elements[i].type == 'checkbox') {
+                            var check_type = elements[i].name.split("_");
+                            if (check_type[2] == 'm') {
+                                elements[i].checked = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function setInsertOnly() {
+                with (document.Users) {
+                    for (var i=0; i < elements.length; i++) {
+                        if (elements[i].type == 'checkbox') {
+                            var check_type = elements[i].name.split("_");
+                            if (check_type[2] == 'i') {
+                                elements[i].checked = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function setHeaderOnly() {
+                with (document.Users) {
+                    for (var i=0; i < elements.length; i++) {
+                        if (elements[i].type == 'checkbox') {
+                            var check_type = elements[i].name.split("_");
+                            if (check_type[2] == 'h') {
+                                elements[i].checked = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function setSearchOnly() {
+                with (document.Users) {
+                    for (var i=0; i < elements.length; i++) {
+                        if (elements[i].type == 'checkbox') {
+                            var check_type = elements[i].name.split("_");
+                            if (check_type[2] == 's') {
+                                elements[i].checked = true;
+                            }
+                        }
                     }
                 }
             }
@@ -265,6 +326,11 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             <input type=button onclick="checkTutti()" value="Seleziona tutti" />
             <input type=button onclick="uncheckTutti()" value="Deseleziona tutti" />
             <input type=button onclick="setReadOnly()" value="sola lettura" />
+            <input type=button onclick="setModifyOnly()" value="sola modifica" />
+            <input type=button onclick="setDeleteOnly()" value="sola cancellazione" />
+            <input type=button onclick="setInsertOnly()" value="solo inserimento" />
+            <input type=button onclick="setHeaderOnly()" value="solo header" />
+            <input type=button onclick="setSearchOnly()" value="sola ricerca" />
         </form>
         <?php
 //        mysql_close($connection);
