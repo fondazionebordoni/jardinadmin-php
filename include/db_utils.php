@@ -9,6 +9,7 @@ include_once 'group.php';
 include_once 'grouping.php';
 include_once 'user.php';
 include_once 'toolbar.php';
+include_once 'plugin.php';
 
 function insert_management_permissions($group_id, $resource_id, $r = 0, $w = 0, $m = 0, $i = 0) {
     global $T_MANAGEMENT;
@@ -24,7 +25,7 @@ function insert_management_permissions($group_id, $resource_id, $r = 0, $w = 0, 
 
     $result = mysql_insert_id();
     return $result;
-    
+
     mysql_close($connection);
 }
 
@@ -39,9 +40,39 @@ function insert_tool($toolbar) {
                 ON DUPLICATE KEY UPDATE `id_resultset`='".$toolbar->get_id_resultset()."',
                 `id_group`='".$toolbar->get_id_group()."', `tools`='".$toolbar->get_tools()."'";
     $result = mysql_query($query)
-            or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
-        mysql_close($connection);
-        return "<pre>Toolbar added!</pre>";
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+    mysql_close($connection);
+    return "<pre>Toolbar added!</pre>";
+}
+
+
+function insert_pluginassociation($id_plugin, $id_resultset, $id_group) {
+    global $T_PLUGINASSOCIATION;
+
+    $connection = db_get_connection();
+
+    $query = "INSERT INTO $T_PLUGINASSOCIATION SET `id_plugin`='".$id_plugin."',`id_resultset`='".$id_resultset."',
+                `id_group`='".$id_group."'
+                ON DUPLICATE KEY UPDATE `id_plugin`='".$id_plugin."',`id_resultset`='".$id_resultset."',
+                `id_group`='".$id_group."'";
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+    mysql_close($connection);
+    return "<pre>Plugin association added!</pre>";
+}
+
+
+function delete_pluginassociation($id_plugin, $id_resultset, $id_group) {
+    global $T_PLUGINASSOCIATION;
+
+    $connection = db_get_connection();
+
+    $query = "DELETE FROM $T_PLUGINASSOCIATION WHERE `id_plugin`='".$id_plugin."' AND `id_resultset`='".$id_resultset."' AND
+                `id_group`='".$id_group."'";
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+    mysql_close($connection);
+    return "<pre>Plugin association deleted</pre>";
 }
 
 function insert_management_toolbar($group_id, $id_resulteset, $tools) {
@@ -83,7 +114,7 @@ function insert_user($username, $password, $name, $surname, $email, $office, $te
     $query = sprintf("INSERT into $T_USER ".
         "(`username`, `password`, `name`, `surname`, `email`, `office`, `telephone`, `status`, `id_group`)
             VALUES ('%s', PASSWORD('%s'), '%s','%s','%s','%s','%s','%s','%s')",
-        $username, $password, $name, $surname, $email, $office, $telephone, $status, $id_group);
+        $username, $password, addslashes($name), addslashes($surname), addslashes($email), addslashes($office), $telephone, $status, $id_group);
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -99,8 +130,7 @@ function edit_user($user_id, $username, $name, $surname, $email, $office, $telep
     global $T_USER;
     $connection = db_get_connection();
 
-    if($password!="")
-    {
+    if($password!="") {
         $query = sprintf("UPDATE $T_USER SET `username`='%s', `password`=PASSWORD('%s'), `name`='%s',
             `surname`='%s', `email`='%s', `office`='%s', `telephone`='%s', `status`='%s', `id_group`='%s'
             WHERE id='%s'",
@@ -164,7 +194,7 @@ function insert_group($name, $status) {
     $connection = db_get_connection();
 
     $query = sprintf("INSERT into $T_GROUP (`name`, `status`) VALUES ('%s', '%s')",
-        $name, $status);
+        addslashes($name), $status);
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -181,12 +211,11 @@ function edit_group($group_id, $name, $status, $old_status ) {
     $connection = db_get_connection();
 
     $query = sprintf("UPDATE $T_GROUP SET `name`='%s', `status`='%s' WHERE id='%s'",
-            $name, $status, $group_id);
+        $name, $status, $group_id);
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
 
-    if($status!=$old_status)
-    {
+    if($status!=$old_status) {
         /* lo stato del gruppo è stato modificato, quindi attivo o disattivo
          * tutti gli utenti che ne fanno parte */
         $query_usr = sprintf("UPDATE $T_USER SET `status`='%s'WHERE id_group='%s'",
@@ -206,7 +235,7 @@ function get_groups($id_group=0) {
 
     // la query commentata prendeva solo i dati dei gruppi che non sono hanno il resultset
     //$query = "SELECT * FROM $T_GROUP WHERE `status` = 1 ". "AND `id` NOT IN (SELECT DISTINCT `id_group` "." FROM $T_MANAGEMENT WHERE `id_resource` = $resultset_id)";
-    
+
     if($id_group!=0) $WHERE_CLAUSE = "WHERE `id` = '$id_group' ";
 
     $query = "SELECT * FROM $T_GROUP $WHERE_CLAUSE ORDER BY status DESC, id";
@@ -236,7 +265,7 @@ function delete_groups($id_group=0) {
 
     if($id_group!=0) {
 
-        // cancello il gruppo 
+    // cancello il gruppo
         $query = "DELETE from $T_GROUP where `id` = '$id_group' LIMIT 1";
         $result = mysql_query($query)
             or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -257,7 +286,7 @@ function insert_grouping($name, $alias) {
     $connection = db_get_connection();
 
     $query = sprintf("INSERT into $T_GROUPING (`name`, `alias`) VALUES ('%s', '%s')",
-        $name, $alias);
+        addslashes($name), addslashes($alias));
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -274,13 +303,117 @@ function edit_grouping($grouping_id, $name, $alias ) {
     $connection = db_get_connection();
 
     $query = sprintf("UPDATE $T_GROUPING SET `name`='%s', `alias`='%s' WHERE id='%s'",
-            $name, $alias, $grouping_id);
+        $name, $alias, $grouping_id);
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
 
     mysql_close($connection);
 
     return $grouping_id;
+}
+
+
+function get_plugins($id_plugin=0) {
+    global $T_PLUGIN;
+    $connection = db_get_connection();
+
+    if($id_plugin!=0) $WHERE_CLAUSE = "WHERE `id` = '$id_plugin' ";
+
+    $query = "SELECT * FROM $T_PLUGIN $WHERE_CLAUSE ORDER BY name";
+
+    /* Esegui la query */
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+    $results = array();
+    $i = 0;
+    while($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $id = $row['id'];
+        $name = $row['name'];
+        $configurationfile = $row['configurationfile'];
+        $type = $row['type'];
+        $note = $row['note'];
+        $results[$i++] = new Plugin($id, $name, $configurationfile, $type, $note);
+    }
+
+    mysql_free_result($result);
+    mysql_close($connection);
+
+    return $results;
+}
+
+
+function get_pluginassociation($id_plugin, $id_resultset, $id_group) {
+    global $T_PLUGINASSOCIATION;
+    $connection = db_get_connection();
+
+    $query = "SELECT * FROM $T_PLUGINASSOCIATION WHERE `id_plugin`='".$id_plugin."' AND `id_resultset`='".$id_resultset."' AND `id_group`='".$id_group."'";
+
+    /* Esegui la query */
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+    $results = mysql_num_rows($result);
+
+    mysql_free_result($result);
+    mysql_close($connection);
+
+    return $results;
+}
+
+function delete_plugin($id_plugin=0) {
+    global $T_PLUGIN;
+    $connection = db_get_connection();
+
+    if($id_plugin!=0) {
+
+    // cancello il gruppo
+        $query = "DELETE from $T_PLUGIN where `id` = '$id_plugin' LIMIT 1";
+        $result = mysql_query($query)
+            or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+        if ($result) return TRUE;
+        else return FALSE;
+    } else {
+        return FALSE;
+    }
+
+    mysql_free_result($result);
+    mysql_close($connection);
+
+}
+
+
+function edit_plugin($plugin_id, $name, $configurationfile, $type, $note ) {
+    global $T_PLUGIN;
+    $connection = db_get_connection();
+
+    $query = sprintf("UPDATE $T_PLUGIN SET `name`='%s', `type`='%s', `configurationfile`='%s', `note`='%s' WHERE id='%s'",
+        $name, $type, $configurationfile, $note, $plugin_id);
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+    mysql_close($connection);
+
+    return $grouping_id;
+}
+
+
+function insert_plugin($name, $configurationfile, $type, $note) {
+    global $T_PLUGIN;
+    $connection = db_get_connection();
+
+    $query = sprintf("INSERT into $T_PLUGIN (`name`, `type`, `configurationfile`, `note`) VALUES ('%s', '%s', '%s', '%s')",
+        addslashes($name), $type, addslashes($configurationfile), addslashes($note));
+
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+    $id = mysql_insert_id  ($connection);
+
+    mysql_close($connection);
+
+    return $id;
 }
 
 function get_groupings($id_grouping=0) {
@@ -316,7 +449,7 @@ function delete_grouping($id_grouping=0) {
 
     if($id_grouping!=0) {
 
-        // cancello il gruppo
+    // cancello il gruppo
         $query = "DELETE from $T_GROUPING where `id` = '$id_grouping' LIMIT 1";
         $result = mysql_query($query)
             or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -340,7 +473,7 @@ function insert_field($id, $resultset_id, $type, $def) {
     $query = sprintf("INSERT into $T_FIELD ".
         "(`id`, `default_header`, `id_resultset`, `type`, `defaultvalue` ) VALUES ".
         "('%d', '1', '%d', '%s', '%s')",
-        $id, $resultset_id, $type, $def);
+        $id, $resultset_id, addslashes($type), addslashes($def));
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -373,7 +506,7 @@ function insert_resultset($resultset) {
 
     $query = sprintf("INSERT into $T_RESULTSET ".
         "(`id`, `statement`) VALUES ('%s', '%s')",
-        $id, $statement);
+        $id, addslashes($statement));
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -408,7 +541,7 @@ function insert_resource($name, $alias) {
 
     $query = sprintf("INSERT into $T_RESOURCE ".
         "(`name`, `alias`) VALUES ('%s', '%s')",
-        $name, $alias);
+        addslashes($name), addslashes($alias));
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -593,7 +726,7 @@ function get_table_type($resultset_name) {
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
 
-//    $type = 'Table';
+    //    $type = 'Table';
     // interessa solo il primo campo
     $row = mysql_fetch_field($result);
     if ($row) {
@@ -603,6 +736,7 @@ function get_table_type($resultset_name) {
     return $type;
 
 }
+
 //function get_fields_from_query($table_name) {
 //    $connection = db_get_connection();
 //
@@ -616,7 +750,7 @@ function get_table_type($resultset_name) {
 //    $results = array();
 //    $i = 0;
 //    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-//        
+//
 //        /* Inserisci il nome del campo nei risultati */
 //        $results[$i++] =
 //            new Resource(null, $row['Field'], null, $row['Type'], $row['Default'], null, null, null);

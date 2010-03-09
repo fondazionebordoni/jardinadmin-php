@@ -57,6 +57,12 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 conf = window.confirm('Confermi la cancellazione di questo raggruppamento? L\'operazione non può essere annullata');
                 if(conf) return true;
             }
+
+            function canc_plugin() {
+                // conferma la richiesta di cancellazione di un reggruppamento
+                conf = window.confirm('Confermi la cancellazione di questo plugin? L\'operazione non può essere annullata');
+                if(conf) return true;
+            }
         </script>
     </head>
     <body>
@@ -122,7 +128,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
         <div class="section">
             <h1>Gestione Permessi</h1>
 
-            <h2>Aggiunta permessi Resultset a Gruppo</h2>
+            <h2>Amministrazione Resultset/Gruppo</h2>
             <form action="manage_resources.php" method="POST">
                 <input type="hidden" name="action" value="old" />
                 <select name="resultset_id">
@@ -257,6 +263,61 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
             </form>
         </div>
 
+        <div class="section">
+            <?php
+            $plugins = get_plugins();
+            ?>
+            <h1>Gestione Plugin</h1>
+
+            <h2>Creazione Plugin</h2>
+            <form action="manage_plugins.php" method="POST">
+                <input type="hidden" name="action" value="new" />
+                name: <input type="text" name="plugin_name" /><br />
+                configurationfile: <input type="text" name="plugin_configurationfile" /><br/>
+                type: <select name="plugin_alias" >
+                    <option>link</option>
+                    <option>single</option>
+                </select>
+                <br />
+                note: <input type="text" name="plugin_note" /><br />
+                </p>
+                <input type="submit" value="Submit" />
+            </form>
+
+            <h2>Modifica Plugin</h2>
+            <form action="manage_plugins.php" method="POST">
+                <input type="hidden" name="action" value="plugin_edit" />
+                <select name="plugin_id">
+                    <?php foreach ($plugins as $plugin) {
+                        $id = $plugin->get_id();
+                        $name = $plugin->get_name();
+//                        $configurationfile = $plugin->get_configurationfile();
+//                        $type = $plugin->get_type();
+//                        $note = $plugin->get_note();
+                        ?>
+                    <option value="<?php echo $id ?>"><?php echo "$name"; ?></option>
+                    <?php } ?>
+                </select>
+                <input type="submit" value="Submit" />
+            </form>
+
+            <h2>Eliminazione Plugin</h2>
+            <form name="delete_plugin" action="manage_plugins.php" method="POST" onsubmit="return canc_plugin();">
+                <input type="hidden" name="action" value="plugin_delete" />
+                <select name="plugin_id">
+                    <?php foreach ($plugins as $plugin) {
+                        $id = $plugin->get_id();
+                        $name = $plugin->get_name();
+//                        $configurationfile = $plugin->get_configurationfile();
+//                        $type = $plugin->get_type();
+//                        $note = $plugin->get_note();
+                        ?>
+                    <option value="<?php echo $id ?>"><?php echo "$name"; ?></option>
+                    <?php } ?>
+                </select>
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
 
         <div class="section">
         <?php

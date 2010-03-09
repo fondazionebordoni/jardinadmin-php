@@ -319,6 +319,45 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     </td>
                     <td colspan="4"><input type="text" name="tools" value="<?php echo $toolbar->get_tools(); ?>" /></td>
                 </tr>
+                <tr>
+                    <td colspan="4">Plugins</td>
+                    <td colspan="4">
+                        <?php $plugins = get_plugins(); ?>
+                        <table>
+                                <tr>
+                                    <td>id</td>
+                                    <td>name</td>
+                                    <td>configurationfile</td>
+                                    <td>type</td>
+                                    <td>note</td>
+                                    <td>abilita per questo gruppo</td>
+                                </tr>
+                                <?php
+                                
+                                foreach ($plugins as $plugin) {
+                                    $id_plugin = $plugin->get_id();
+                                    $name = $plugin->get_name();
+                                    $configurationfile = $plugin->get_configurationfile();
+                                    $type = $plugin->get_type();
+                                    $note = $plugin->get_note();
+
+                                    $pluginassociation = get_pluginassociation($id_plugin, $id_resultset, $group_id);
+                                ?>
+                                <tr>
+                                    <td><?php echo $id_plugin ?></td>
+                                    <td><?php echo $name ?></td>
+                                    <td><?php echo $configurationfile ?></td>
+                                    <td><?php echo $type ?></td>
+                                    <td><?php echo $note ?></td>
+                                    <td><input type="checkbox" name="plugin_<?= $id_plugin ?>_ass" <?php if($pluginassociation==1) print "checked=\"checked\""; ?> /></td>
+                                </tr>
+                                <?php
+                                }
+                                ?>
+                        </table>
+
+                    </td>
+                </tr>
 
             </table>
 
