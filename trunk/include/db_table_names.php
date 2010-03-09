@@ -15,5 +15,7 @@ $T_FIELDINPREFERENCE = $WRAP . $SYSTEM_PREFIX . "fieldinpreference" . $WRAP;
 $T_GROUPING = $WRAP . $SYSTEM_PREFIX . "grouping" . $WRAP;
 $T_USERWARNINGS = $WRAP . $SYSTEM_PREFIX . "userwarnings" . $WRAP;
 $T_GROUPWARNINGS = $WRAP . $SYSTEM_PREFIX . "groupwarnings" . $WRAP;
+$T_PLUGIN = $WRAP . $SYSTEM_PREFIX . "plugin" .$WRAP;
+$T_PLUGINASSOCIATION = $WRAP . $SYSTEM_PREFIX . "pluginassociation" .$WRAP;
     
 ?>
