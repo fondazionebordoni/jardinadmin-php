@@ -25,6 +25,12 @@ td {
     padding: 4px 8px;
 }
 
+tr.title {
+    text-align: center;
+    padding: 4px 8px;
+    text-decoration:underline;
+}
+
 form {
     background: #eee;
     border: 1px solid #ccc;
