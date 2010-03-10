@@ -233,7 +233,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 <tr>
                     <td colspan="11">Gruppo: <b><?php echo $group_name; ?></b></td>
                 </tr>
-                <tr>
+                <tr class="title">
                     <td>name</td>
                     <td>alias</td>
                     <td>type</td>
@@ -324,7 +324,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     <td colspan="4">
                         <?php $plugins = get_plugins(); ?>
                         <table>
-                                <tr>
+                                <tr class="title">
                                     <td>id</td>
                                     <td>name</td>
                                     <td>configurationfile</td>

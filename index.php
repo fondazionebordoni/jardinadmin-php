@@ -274,7 +274,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="hidden" name="action" value="new" />
                 name: <input type="text" name="plugin_name" /><br />
                 configurationfile: <input type="text" name="plugin_configurationfile" /><br/>
-                type: <select name="plugin_alias" >
+                type: <select name="plugin_type" >
                     <option>link</option>
                     <option>single</option>
                 </select>

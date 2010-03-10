@@ -23,7 +23,7 @@ include_once 'include/db_utils.php';
 
         if ($action == "new") {
             /* inserisco i dati del nuovo raggruppamento e ne prendo l'id */
-            $new_plugin_id = insert_plugin($plugin_name, $plugin_type, $plugin_configurationfile, $plugin_note);
+            $new_plugin_id = insert_plugin($plugin_name, $plugin_configurationfile, $plugin_type, $plugin_note);
             if ($new_plugin_id) {
                 echo "<br>Plugin <b>$plugin_name</b> inserito con successo";
             }
