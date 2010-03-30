@@ -12,7 +12,7 @@ if ($_POST['mysql_host']!="" && $_POST['mysql_user']!="" && $_POST['mysql_databa
 // imposto alcuni valori di default riguardo il db di connessione
 if($_SESSION['mysql_host']=="") $_SESSION['mysql_host'] = "";
 if($_SESSION['mysql_user']=="") $_SESSION['mysql_user'] = "";
-if($_SESSION['mysql_database']=="") $_SESSION['mysql_database'] = "urpCrmProtDBSvil";
+if($_SESSION['mysql_database']=="") $_SESSION['mysql_database'] = "";
 
 // se ho un db a cui connettermi, includo i vari files e imposto un flag
 if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mysql_database']!="" && $_SESSION['mysql_password']!="")
