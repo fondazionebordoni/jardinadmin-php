@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once 'include/db_utils.php';
+include 'include/db_utils.php';
 
 $connection = db_get_connection();
 // recupero le info sui grouping
@@ -193,22 +193,120 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 
         //$groups = get_groups($resultset_id);
         $groups = get_groups();
-
+        $resultsets = get_resultsets();
         //        if (count($groups) <= 0) {
         //            echo "Non esiste nessun gruppo che non abbia il resultset già in management. ".
         //                "<a href='index.php'>Torna indietro</a>";
         //        }
         //        else {
 //        var_dump($group_id);
+        if ($action == "update") {
+            $group_id = $_POST['group_id'];
+            $tools = strtoupper($_POST['tools']);
+            $resultset_id = $_POST['resultset_id'];
+            if (!$group_id) {
+                die ("Errore: id del gruppo <pre><b>$group_id</b></pre> non impostato");
+            }
+            $resource_list_UPDATE = array();
+
+            foreach($_REQUEST AS $key => $value) {
+                if (preg_match('/^c_(\d*)_(\w+)/', $key, $pin)) {
+                    ${'res_'.$pin[1]}['id'] = $pin[1];
+                    ${'res_'.$pin[1]}[$pin[2]] = $value;
+                    $resource_list_UPDATE[$pin[1]] = ${'res_'.$pin[1]};
+                }
+            }
+
+            /*
+            * per controllare se tutti i permessi sono impostati a 0,
+            * caso in cui devo cancellare tutte le righe in __system_management,
+            * imposto un flag e creo un array dove inserire gli id delle righe
+            * appena create per poterle (eventualmente) cancellare alla fine
+            */
+
+            $permissions = 0;
+            $array_insert = array();
+
+            echo "<pre>Inserting permissions... ";
+            foreach ($resource_list_UPDATE as $resource) {
+                $id = $resource['id'];
+                $r = 0 + $resource['r'];
+                $w = 0 + $resource['w'];
+                $m = 0 + $resource['m'];
+                $i = 0 + $resource['i'];
+                $alias = $resource['a'];
+                $header = $resource['h'];
+                $search = $resource['s'];
+                $grouping=$resource['g'];
+                if($search=="") $search = 0;
+                if($header=="") $header = 0;
+//                echo "<pre>Inserting $id ($alias) permissions [$r$w$m$i] ... ";
+                // cancello eventuali permessi inseriti precedentemente
+                $connection = db_get_connection();
+                $query_del = "delete from $T_MANAGEMENT where id_resource = $id and id_group = $group_id";
+                $risu_del = mysql_query($query_del);
+                // modifico l'alias della risorsa
+                $query_upd = "update $T_RESOURCE set alias = '$alias' where id = $id";
+                $risu_upd = mysql_query($query_upd);
+                mysql_close($connection);
+                // inserisco i permessi
+                $array_insert[] = insert_management_permissions($group_id, $id, $r, $w, $m, $i);
+                // inserisco le proprietà della risorsa in _field
+                if($header!="" || $search!="" || $grouping!="") edit_field($id, $header, $search, $grouping);
+//
+                if($r==1||$w==1||$m==1||$i==1) $permissions = 1;
+            }
+            echo "<b>done</b></pre>";
+            //       	echo insert_management_toolbar($group_id, $resultset_id, $tools);
+            // INSERIRE CODICE SALVATAGGIO TOOLBAR
+            $toolbar = new toolbar($group_id, $resultset_id, $tools);
+            insert_tool($toolbar);
+    //print_r($_POST);
+            // CODICE SALVATAGGIO ASSOCIAZIONI PLUGIN
+            $plugins = get_plugins();
+            foreach ($plugins as $plugin) {
+                if ( $_POST['plugin_'.$plugin->get_id().'_ass'] == 'on') {
+                    insert_pluginassociation($plugin->get_id(), $resultset_id, $group_id);
+                } else {
+                    delete_pluginassociation($plugin->get_id(), $resultset_id, $group_id);
+                }
+            }
+            //
+
+            // se i permessi sono tutti 0 e i tools sono vuoti, cancello le righe da system_management
+            if($permissions==0 && trim($tools)=="") {
+                foreach($array_insert as $id_insert) {
+                    $connection = db_get_connection();
+                    $query_del = "delete from $T_MANAGEMENT where id = $id_insert";
+                    $risu_del = mysql_query($query_del);
+                }
+                echo "<pre><b>Permessi e tools vuoti, elimino i record relativi ai permessi</b></pre>";
+            }
+        }
+
         ?>
 
         <form action="manage_resources.php" method="POST" name="Group">
-
             <input type="hidden" name="action" value="old">
-            <input type="hidden" name="resultset_id" value="<?php echo $_POST['resultset_id'] ?>">
-
-            Seleziona gruppo:
-            <select name="group_id" onchange="this.form.submit()">
+            <table>
+                <tr>
+                    <td>Seleziona resultset:</td>
+                    <td><select name="resultset_id" onchange="this.form.submit()">
+                <?php foreach ($resultsets as $resultset) {
+                        $id = $resultset->get_id();
+                        $name = $resultset->get_alias();
+                        ?>
+                    <option value="<?php echo $id ?>" <?php if ($_POST['resultset_id']==$id) echo "selected"; ?>>
+                            <?php echo $name; ?>
+                    </option>
+                    <?php } ?>
+            </select></td>
+            <td rowspan="2"><input type="submit" value="aggiorna selezione"></td>
+            
+                </tr>
+                <tr>
+                    <td>Seleziona gruppo:</td>
+                    <td><select name="group_id" onchange="this.form.submit()">
                 <?php foreach ($groups as $group) {
                     $id = $group->get_id();
                     $name = $group->get_name();
@@ -219,16 +317,27 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                         <?php echo $name; ?>
                 </option>
                 <?php } ?>
-            </select>
+            </select></td>
+                </tr>
             
-        <input type="submit" value="cambia gruppo">
-
+        </table>
         </form>
+        
 
-        <form action="manage_permissions.php" method="POST" name="Users">
+        <form action="manage_resources.php" method="POST" name="Users">
+
+            <input type="hidden" name="action" value="update">
 
             <input type="hidden" name="group_id" value="<?php echo $group_id; ?>"
-
+            <input type="submit" value="Submit" />
+            <input type=button onclick="checkTutti()" value="Seleziona tutti" />
+            <input type=button onclick="uncheckTutti()" value="Deseleziona tutti" />
+            <input type=button onclick="setReadOnly()" value="sola lettura" />
+            <input type=button onclick="setModifyOnly()" value="sola modifica" />
+            <input type=button onclick="setDeleteOnly()" value="sola cancellazione" />
+            <input type=button onclick="setInsertOnly()" value="solo inserimento" />
+            <input type=button onclick="setHeaderOnly()" value="solo header" />
+            <input type=button onclick="setSearchOnly()" value="sola ricerca" />
                    <table>
                 <tr>
                     <td colspan="11">Gruppo: <b><?php echo $group_name; ?></b></td>
@@ -313,15 +422,22 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 <tr>
                     <td colspan="11">&nbsp;</td>
                 </tr>
-                <tr>
+                
+
+            </table>
+
+             <table>
+            <tr>
                     <td colspan="4">Tools (ALL MODIFY EXPORT IMPORT PREFERENCE ANALISYS)
                         <input type="hidden" name="resultset_id" value="<? echo $resultset_id; ?>">
                     </td>
-                    <td colspan="4"><input type="text" name="tools" value="<?php echo $toolbar->get_tools(); ?>" /></td>
+                    <td colspan="4"><input type="text" name="tools" size="50" value="<?php echo $toolbar->get_tools(); ?>" /></td>
                 </tr>
+             </table>
+            <table>
                 <tr>
-                    <td colspan="4">Plugins</td>
-                    <td colspan="4">
+                    <td>Plugins</td>
+                    <td>
                         <?php $plugins = get_plugins(); ?>
                         <table>
                                 <tr class="title">
@@ -333,7 +449,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                                     <td>abilita per questo gruppo</td>
                                 </tr>
                                 <?php
-                                
+
                                 foreach ($plugins as $plugin) {
                                     $id_plugin = $plugin->get_id();
                                     $name = $plugin->get_name();
@@ -358,9 +474,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 
                     </td>
                 </tr>
-
-            </table>
-
+        </table>
             <input type="submit" value="Submit" />
             <input type=button onclick="checkTutti()" value="Seleziona tutti" />
             <input type=button onclick="uncheckTutti()" value="Deseleziona tutti" />
