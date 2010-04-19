@@ -98,13 +98,19 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="submit" value="Submit" />
             </form>
 
-            <h2>Creazione Resultset</h2>
-            <form action="manage_resultset.php" method="POST">
-                <input type="hidden" name="action" value="new" />
-                name: <input type="text" name="resultset_name" /><br>
-                alias: <input type="text" name="resultset_alias" /><br>
-                statement: <input type="text" name="resultset_statement" /><br>
-				</p>
+           <h2>Amministrazione Resultset/Gruppo</h2>
+            <form action="manage_resources.php" method="POST">
+                <input type="hidden" name="action" value="old" />
+                <select name="resultset_id">
+                    <?php foreach ($resultsets as $resultset) {
+                        $id = $resultset->get_id();
+                        $name = $resultset->get_alias();
+                        ?>
+                    <option value="<?php echo $id ?>">
+                            <?php echo $name; ?>
+                    </option>
+                    <?php } ?>
+                </select>
                 <input type="submit" value="Submit" />
             </form>
 
@@ -123,30 +129,6 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 </select>
                 <input type="submit" value="Submit" />
             </form>
-        </div>
-
-        <div class="section">
-            <h1>Gestione Permessi</h1>
-
-            <h2>Amministrazione Resultset/Gruppo</h2>
-            <form action="manage_resources.php" method="POST">
-                <input type="hidden" name="action" value="old" />
-                <select name="resultset_id">
-                    <?php foreach ($resultsets as $resultset) {
-                        $id = $resultset->get_id();
-                        $name = $resultset->get_alias();
-                        ?>
-                    <option value="<?php echo $id ?>">
-                            <?php echo $name; ?>
-                    </option>
-                    <?php } ?>
-                </select>
-                <input type="submit" value="Submit" />
-            </form>
-
-            <!-- <h2>Modifica permessi Resultset di Gruppo</h2> -->
-
-            <!-- <h2>Eliminazione Resultset da Gruppo</h2> -->
         </div>
 
         <div class="section">

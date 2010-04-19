@@ -177,30 +177,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
         $toolbar = get_toolbar_from_ids($resultset_id, $group_id);
         $_POST['resultset_id'] = $resultset_id;
 
-        }
-        else { // action = old
-
-            $resultset_id = $_POST['resultset_id'];
-
-            if (!$resultset_id) {
-                die ("Errore: id del resultset <pre><b>$resultset_id</b></pre> non impostato");
-            }
-
-            $resource_list = get_fields_from_resultsetid($resultset_id);
-            $resource_list[] = get_resource_from_id($resultset_id);
-            $toolbar = get_toolbar_from_ids($resultset_id, $group_id);
-        }
-
-        //$groups = get_groups($resultset_id);
-        $groups = get_groups();
-        $resultsets = get_resultsets();
-        //        if (count($groups) <= 0) {
-        //            echo "Non esiste nessun gruppo che non abbia il resultset già in management. ".
-        //                "<a href='index.php'>Torna indietro</a>";
-        //        }
-        //        else {
-//        var_dump($group_id);
-        if ($action == "update") {
+        } else if ($action == "update") {
             $group_id = $_POST['group_id'];
             $tools = strtoupper($_POST['tools']);
             $resultset_id = $_POST['resultset_id'];
@@ -284,6 +261,27 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             }
         }
 
+        $resultset_id = $_POST['resultset_id'];
+
+        if (!$resultset_id) {
+            die ("Errore: id del resultset <pre><b>$resultset_id</b></pre> non impostato");
+        }
+
+        $resource_list = get_fields_from_resultsetid($resultset_id);
+        $resource_list[] = get_resource_from_id($resultset_id);
+        $toolbar = get_toolbar_from_ids($resultset_id, $group_id);
+
+        //$groups = get_groups($resultset_id);
+        $groups = get_groups();
+        $resultsets = get_resultsets();
+        //        if (count($groups) <= 0) {
+        //            echo "Non esiste nessun gruppo che non abbia il resultset già in management. ".
+        //                "<a href='index.php'>Torna indietro</a>";
+        //        }
+        //        else {
+//        var_dump($group_id);
+        
+
         ?>
 
         <form action="manage_resources.php" method="POST" name="Group">
@@ -322,7 +320,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             
         </table>
         </form>
-        
+
 
         <form action="manage_resources.php" method="POST" name="Users">
 
