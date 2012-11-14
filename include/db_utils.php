@@ -497,6 +497,20 @@ function edit_field($id, $default_header, $search_grouping, $id_grouping) {
 }
 
 
+function update_field($id, $type, $def) {
+    global $T_FIELD;
+    $connection = db_get_connection();
+
+    $query = sprintf("UPDATE $T_FIELD ".
+        "SET `type` = '%s', `defaultvalue` = '%s' WHERE `id` = '%s'",
+        addslashes($type), addslashes($def), $id);
+
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+
+    mysql_close($connection);
+}
+
 function insert_resultset($resultset) {
     global $T_RESULTSET;
     $connection = db_get_connection();
@@ -711,6 +725,36 @@ function get_fields_from_query($query) {
             new Resource(null, $meta->name, null, $meta->type, $meta->def, $meta->header, $meta->search, $meta->grouping);
     }
 
+    //mysql_free_result($result);
+    mysql_close($connection);
+
+    /* Ritorna i risultati */
+    return $results;
+}
+
+
+function get_fields_from_query_with_temp_table($query) {
+    $connection = db_get_connection();
+    
+    $ts = date('YmdHi');
+    $tmp_tab_name = "__jardin_".$ts;
+    $query_tmp_tab = "CREATE TEMPORARY TABLE `" . $tmp_tab_name. "` (" . $query . " LIMIT 0,1)";
+    
+    mysql_query($query_tmp_tab . " LIMIT 0,1")
+        or die("Query <pre><b>$query_tmp_tab</b></pre> failed: " . mysql_error());
+    
+    // campi della describe "Field      | Type     | Null | Key | Default | Extra"
+    $result_query = "DESCRIBE " . $tmp_tab_name;
+    $tmp_tab_result = mysql_query($result_query)
+        or die("Query <pre><b>$result_query</b></pre> failed: " . mysql_error());
+    
+    $results = array();
+    $i = 0;
+    while($row = mysql_fetch_array($tmp_tab_result, MYSQL_ASSOC)) {
+        $results[$i++] =
+            new Resource(null, $row['Field'], null, $row['Type'], $row['Default'], null, null, null);
+    }
+    
     //mysql_free_result($result);
     mysql_close($connection);
 
@@ -935,6 +979,25 @@ function remove_resultset_complete_by_id($resultset_id) {
     remove_fields_by_resultset_id($resultset_id);
     //remove_toolbar_by_resultset_id($resultset_id);
     remove_only_resultset_by_id($resultset_id);
+}
+
+
+
+function get_resultset_from_id($id) {
+    global $T_RESOURCE;
+    global $T_RESULTSET;
+    $connection = db_get_connection();
+
+    $query = "SELECT r.name as name, r.alias as alias, rs.statement as statement 
+        FROM  $T_RESOURCE as r JOIN $T_RESULTSET as rs ON r.id=rs.id WHERE r.id=$id";
+    $result = mysql_query($query)
+        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+    $r = mysql_fetch_array($result);
+    $res = new Resultset($r['id'],$r['name'],$r['alias'],$r['statement']);
+
+    mysql_close($connection);
+
+    return $res;
 }
 
 ?>

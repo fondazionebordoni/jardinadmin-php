@@ -1,6 +1,7 @@
 <?php
 
 include_once 'resource.php';
+include_once 'db_utils.php';
 
 /**
  * Description of resultset
