@@ -137,8 +137,8 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             $resultset_statement = stripslashes($_POST['resultset_statement']);
 
             /* Esegui query per prendere i campi dal resultset */
-            $resource_fields = get_fields_from_query($resultset_statement);
-//            $resource_fields = get_fields_from_query($resultset_name);
+//            $resource_fields = get_fields_from_query($resultset_statement);
+            $resource_fields = get_fields_from_query_with_temp_table($resultset_statement);
 
             /*
             * TODO questa parte deve essere eseguita dopo la fase che permette
@@ -205,13 +205,23 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             $array_insert = array();
 
             echo "<pre>Inserting permissions... ";
+            $thisresultset = get_resultset_from_id($resultset_id);                
+            $resultset_statement = $thisresultset->get_statement();
+            $fields_from_db = get_fields_from_query_with_temp_table($resultset_statement);
+//            echo count($resource_list_UPDATE);
+//            echo print_r($resource_list_UPDATE);
+//                echo "-";
+//                echo count($fields_from_db);
+//                echo print_r($fields_from_db);
             foreach ($resource_list_UPDATE as $resource) {
+                
                 $id = $resource['id'];
                 $r = 0 + $resource['r'];
                 $w = 0 + $resource['w'];
                 $m = 0 + $resource['m'];
                 $i = 0 + $resource['i'];
                 $alias = $resource['a'];
+                $name = $resource['n'];
                 $header = $resource['h'];
                 $search = $resource['s'];
                 $grouping=$resource['g'];
@@ -223,6 +233,13 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 $query_del = "delete from $T_MANAGEMENT where id_resource = $id and id_group = $group_id";
                 $risu_del = mysql_query($query_del);
                 // modifico l'alias della risorsa
+                                
+                for ($i = 0;$i<count($fields_from_db);$i++) {
+                    if ($fields_from_db[$i]->get_name() == $name) {
+                        $currentResIndex = $i;
+                    }
+                }
+                
                 $query_upd = "update $T_RESOURCE set alias = '$alias' where id = $id";
                 $risu_upd = mysql_query($query_upd);
                 mysql_close($connection);
@@ -230,6 +247,9 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 $array_insert[] = insert_management_permissions($group_id, $id, $r, $w, $m, $i);
                 // inserisco le proprietà della risorsa in _field
                 if($header!="" || $search!="" || $grouping!="") edit_field($id, $header, $search, $grouping);
+                
+                // inserire modifica del tipo (Type) e del defaultvalue (Default) sulla base del resourceId
+                update_field($id, $fields_from_db[$currentResIndex]->get_type(), $fields_from_db[$currentResIndex]->get_def());
 //
                 if($r==1||$w==1||$m==1||$i==1) $permissions = 1;
             }
@@ -326,7 +346,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 
             <input type="hidden" name="action" value="update">
 
-            <input type="hidden" name="group_id" value="<?php echo $group_id; ?>"
+            <input type="hidden" name="group_id" value="<?php echo $group_id; ?>"/>
             <input type="submit" value="Submit" />
             <input type=button onclick="checkTutti()" value="Seleziona tutti" />
             <input type=button onclick="uncheckTutti()" value="Deseleziona tutti" />
@@ -387,7 +407,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     $insertperm = $arr_management['insertperm'];
                     ?>
                 <tr>
-                    <td><?= $resource_name ?></td>
+                    <td><?= $resource_name ?><input type="hidden" name="c_<?= $resource_id ?>_n" value="<?= $resource_name ?>"></td>
                     <td><input type="text" name="c_<?= $resource_id ?>_a" value="<?= $resource_alias ?>"></td>
                     <td><?= $resource_type ?></td>
                     <td><?= $resource_def ?></td>
