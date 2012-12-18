@@ -93,7 +93,8 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                 <input type="hidden" name="action" value="new" />
                 name: <input type="text" name="resultset_name" /><br>
                 alias: <input type="text" name="resultset_alias" /><br>
-                statement: <input type="text" name="resultset_statement" />
+                statement: <input type="text" name="resultset_statement" /><br>
+                note: <textarea name="resultset_note" /></textarea>
                 </p>
                 <input type="submit" value="Submit" />
             </form>

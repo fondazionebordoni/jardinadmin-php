@@ -135,6 +135,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             $resultset_name = $_POST['resultset_name'];
             $resultset_alias = $_POST['resultset_alias'];
             $resultset_statement = stripslashes($_POST['resultset_statement']);
+            $resultset_note = stripslashes($_POST['resultset_note']);
 
             /* Esegui query per prendere i campi dal resultset */
 //            $resource_fields = get_fields_from_query($resultset_statement);
@@ -146,7 +147,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             */
 
             /* Inserisci il resultset in resources e prendine l'id */
-            $resultset_id = insert_resource($resultset_name, $resultset_alias);
+            $resultset_id = insert_resource($resultset_name, $resultset_alias, $resultset_note);
 
             $resultset = new Resultset($resultset_id, $resultset_name,
                 $resultset_alias, $resultset_statement);
@@ -161,15 +162,17 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
             $resource_list[$i++] = $resultset;
             foreach ($resource_fields as $resource_field) {
                 $resource_name = $resource_field->get_name();
+                $resource_alias = $resource_field->get_alias();
+                $resource_note = $resource_field->get_note();
                 $resource_type = $resource_field->get_type();
                 $resource_def  = $resource_field->get_def();
                 $resource_header=$resource_field->get_header();
                 $resource_search=$resource_field->get_search();
                 $resource_grouping=$resource_field->get_grouping();
-                $resource_id   = insert_resource($resource_name, $resource_name);
+                $resource_id   = insert_resource($resource_name, $resource_name, $resource_note);
                 insert_field($resource_id, $resultset_id, $resource_type, $resource_def);
                 $resource_list[$i++] =
-                    new Resource($resource_id, $resource_name, $resource_name,
+                    new Resource($resource_id, $resource_name, $resource_name, $resource_note,
                     $resource_type, $resource_def, $resource_header, $resource_search, $resource_grouping);
             }
             
@@ -222,6 +225,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 $i = 0 + $resource['i'];
                 $alias = $resource['a'];
                 $name = $resource['n'];
+                $note = $resource['t'];
                 $header = $resource['h'];
                 $search = $resource['s'];
                 $grouping=$resource['g'];
@@ -230,7 +234,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 //                echo "<pre>Inserting $id ($alias) permissions [$r$w$m$i] ... ";
                 // cancello eventuali permessi inseriti precedentemente
                 $connection = db_get_connection();
-                $query_del = "delete from $T_MANAGEMENT where id_resource = $id and id_group = $group_id";
+//                $query_del = "delete from $T_MANAGEMENT where id_resource = $id and id_group = $group_id";
                 $risu_del = mysql_query($query_del);
                 // modifico l'alias della risorsa
                                 
@@ -240,7 +244,8 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     }
                 }
                 
-                $query_upd = "update $T_RESOURCE set alias = '$alias' where id = $id";
+                $query_upd = "update $T_RESOURCE set alias = '$alias', note='$note' where id = $id";
+                echo $query_upd;
                 $risu_upd = mysql_query($query_upd);
                 mysql_close($connection);
                 // inserisco i permessi
@@ -363,6 +368,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 <tr class="title">
                     <td>name</td>
                     <td>alias</td>
+                    <td>note</td>
                     <td>type</td>
                     <td>defval</td>
                     <td>read</td>
@@ -387,6 +393,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 foreach ($resource_list as $resource) {
                     $resource_name = $resource->get_name();
                     $resource_alias = $resource->get_alias();
+                    $resource_note = $resource->get_note();
                     $resource_id = $resource->get_id();
                     $resource_type = $resource->get_type();
                     $resource_def = $resource->get_def();
@@ -409,6 +416,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 <tr>
                     <td><?= $resource_name ?><input type="hidden" name="c_<?= $resource_id ?>_n" value="<?= $resource_name ?>"></td>
                     <td><input type="text" name="c_<?= $resource_id ?>_a" value="<?= $resource_alias ?>"></td>
+                    <td><textarea  name="c_<?= $resource_id ?>_t"><?= $resource_note ?></textarea></td>
                     <td><?= $resource_type ?></td>
                     <td><?= $resource_def ?></td>
                     <td><input type="checkbox" name="c_<?= $resource_id ?>_r" value="1" <?php if($readperm==1) print "checked=\"checked\""; ?> /></td>
