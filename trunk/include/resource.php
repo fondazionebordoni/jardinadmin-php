@@ -9,16 +9,18 @@ class Resource {
     private $id;
     private $name;
     private $alias;
+    private $note;
     private $type;
     private $def;
     private $header;
     private $search;
     private $grouping;
 
-    function __construct($id, $name, $alias, $type = null, $def = null, $header = null, $search = null, $grouping = null) {
+    function __construct($id, $name, $alias, $note = null, $type = null, $def = null, $header = null, $search = null, $grouping = null) {
         $this->id = $id;
         $this->name = $name;
         $this->alias = $alias;
+        $this->note = $note;                
         $this->type = $type;
         $this->def = $def;
         $this->header = $header;
@@ -38,6 +40,10 @@ class Resource {
         return $this->alias;
     }
 
+    public function get_note() {
+        return $this->note;
+    }
+    
     public function get_type() {
         return $this->type;
     }

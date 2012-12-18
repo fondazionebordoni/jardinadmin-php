@@ -549,13 +549,13 @@ function insert_notify($notify) {
     mysql_close($connection);
 }
 
-function insert_resource($name, $alias) {
+function insert_resource($name, $alias, $note) {
     global $T_RESOURCE;
     $connection = db_get_connection();
 
     $query = sprintf("INSERT into $T_RESOURCE ".
-        "(`name`, `alias`) VALUES ('%s', '%s')",
-        addslashes($name), addslashes($alias));
+        "(`name`, `alias`, `note`) VALUES ('%s', '%s', '%s')",
+        addslashes($name), addslashes($alias), addslashes($note));
 
     $result = mysql_query($query)
         or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
@@ -689,12 +689,13 @@ function get_fields_from_resultsetid($resultset_id) {
         $id = $row['id'];
         $name = $row['name'];
         $alias = $row['alias'];
+        $note = $row['note'];
         $type = $row['type'];
         $def = $row['defaultvalue'];
         $header = $row['default_header'];
         $search = $row['search_grouping'];
         $grouping = $row['id_grouping'];
-        $results[$i++] = new Resource($id, $name, $alias, $type, $def, $header, $search, $grouping);
+        $results[$i++] = new Resource($id, $name, $alias, $note, $type, $def, $header, $search, $grouping);
     }
 
     mysql_free_result($result);
@@ -851,7 +852,8 @@ function get_resource_from_id($resource_id) {
         $id = $row['id'];
         $name = $row['name'];
         $alias = $row['alias'];
-        $resource = new Resource($id, $name, $alias);
+        $note = $row['note'];
+        $resource = new Resource($id, $name, $alias, $note);
     }
     if (!$resource || $row > 1) {
         die("Query <pre><b>$query</b></pre> failed: too much results");
