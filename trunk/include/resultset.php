@@ -11,7 +11,6 @@ include_once 'db_utils.php';
 class Resultset extends Resource {
 
     private $statement;
-    private $note;
 
     function __construct($id, $name, $alias, $statement) {
         parent::__construct($id, $name, $alias);
