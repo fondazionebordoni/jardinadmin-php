@@ -753,7 +753,7 @@ function get_fields_from_query_with_temp_table($query) {
     $i = 0;
     while($row = mysql_fetch_array($tmp_tab_result, MYSQL_ASSOC)) {
         $results[$i++] =
-            new Resource(null, $row['Field'], null, $row['Type'], $row['Default'], null, null, null);
+            new Resource(null, $row['Field'], null, null, $row['Type'], $row['Default'], null, null, null);
     }
     
     //mysql_free_result($result);
