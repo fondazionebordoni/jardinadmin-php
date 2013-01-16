@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'include/db_utils.php';
-
+print_r($_POST);
 $connection = db_get_connection();
 // recupero le info sui grouping
 $query_grouping = "select * from $T_GROUPING";
@@ -234,7 +234,7 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
 //                echo "<pre>Inserting $id ($alias) permissions [$r$w$m$i] ... ";
                 // cancello eventuali permessi inseriti precedentemente
                 $connection = db_get_connection();
-//                $query_del = "delete from $T_MANAGEMENT where id_resource = $id and id_group = $group_id";
+                $query_del = "delete from $T_MANAGEMENT where id_resource = $id and id_group = $group_id";
                 $risu_del = mysql_query($query_del);
                 // modifico l'alias della risorsa
                                 
