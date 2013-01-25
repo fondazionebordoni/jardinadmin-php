@@ -540,7 +540,7 @@ function insert_notify($notify) {
     $bmdid = $notify->get_bmdid();
 
     $query = sprintf("INSERT into $T_NOTIFY ".
-        "(`resultset_id`, `name`, `address_statement`, `data_statement`, `xslt`, `link_id`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')",
+        "(`id_resultset`, `name`, `address_statement`, `data_statement`, `xslt`, `link_id`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')",
         $resultset_id, $notify_name, $address_statement, $data_statement,  $xslt, $bmdid);
 
     $result = mysql_query($query)
