@@ -356,7 +356,7 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
 		<h2>Creazione notifica</h2>
             <form action="manage_notify.php" method="POST">
                 <input type="hidden" name="action" value="new" />
-                resultset: <select name="resultset_id">
+                notificare operazioni sul resultset: <select name="resultset_id">
                     <?php foreach ($resultsets as $resultset) {
                         $id = $resultset->get_id();
                         $name = $resultset->get_alias();
@@ -366,11 +366,11 @@ if ($_SESSION['mysql_host']!="" && $_SESSION['mysql_user']!="" && $_SESSION['mys
                     </option>
                     <?php } ?>
                 </select><br>
-                baseModelData id: <input type="text" name="bmdid" /><br>
-                name: <input type="text" name="notify_name" /><br>
-                address statement: <input type="text" name="address_statement" /><br>
-                data statement: <input type="text" name="data_statement" /><br>
-                xslt: <input type="text" name="xslt" />
+                nome del campo "chiave" per il record (pk del resultset): <input type="text" name="bmdid" /><br>
+                oggetto mail: <input type="text" name="notify_name" /><br>
+                query per recupero indirizzi mail a cui inviare la notifica: <input type="text" name="address_statement" /><br>
+                query recupero dati da mostrare nella mail: <input type="text" name="data_statement" /><br>
+                file di template della mail (xslt): <input type="text" name="xslt" />
 				</p>
                 <input type="submit" value="Submit" />
             </form>
