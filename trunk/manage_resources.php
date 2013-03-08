@@ -238,9 +238,9 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                 $risu_del = mysql_query($query_del);
                 // modifico l'alias della risorsa
                                 
-                for ($i = 0;$i<count($fields_from_db);$i++) {
-                    if ($fields_from_db[$i]->get_name() == $name) {
-                        $currentResIndex = $i;
+                for ($y = 0;$y<count($fields_from_db);$y++) {
+                    if ($fields_from_db[$y]->get_name() == $name) {
+                        $currentResIndex = $y;
                     }
                 }
                 
