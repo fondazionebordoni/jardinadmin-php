@@ -10,6 +10,7 @@ include_once 'include/db_utils.php';
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title></title>
         <link rel="stylesheet" type="text/css" href="style.css" />
+        
     </head>
     <body>
         <a href="index.php">torna all'inizio</a>
@@ -88,8 +89,10 @@ include_once 'include/db_utils.php';
             office: <input type="text" name="user_office" value="<?php echo $user_office ?>" /><br />
             telephone: <input type="text" name="user_telephone" value="<?php echo $user_telephone ?>" /><br />
             status: <select name="user_status">
-                    <option>1</option>
-                    <option<?php if($user_status==0) echo " selected=\"selected\"" ?>>0</option>
+                    <option value="0" <?php if($user_status==0) echo " selected=\"selected\"" ?>>0 - utente disabilitato</option>
+                    <option value="1" <?php if($user_status==1) echo " selected=\"selected\"" ?>>1 - utente abilitato al login</option>
+                    <option value="2" <?php if($user_status==2) echo " selected=\"selected\"" ?>>2 - utente obbligato a registrarsi - credenziali inviate via mail</option>
+                    <option value="3" <?php if($user_status==3) echo " selected=\"selected\"" ?>>3 - utente obbligato a registrarsi - credenziali inviate via mail e telefono</option>
                 </select><br />
             group: <select name="user_id_group">
                 <?php foreach ($groups as $group) {
