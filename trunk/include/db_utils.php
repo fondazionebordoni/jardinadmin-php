@@ -575,9 +575,16 @@ function get_resultsets() {
         "ON (r.id = rs.id) WHERE 1";
 
     /* Esegui la query */
-    $result = mysql_query($query)
-        or die("Query <pre><b>$query</b></pre> failed: " . mysql_error());
+    $result = mysql_query($query);
+//        or die("Query <pre><b>$query</b></pre> failed: " . mysql_errno());
 
+    if (mysql_errno() == 1146) {
+        echo "attenzione! tabelle di sistema inesistenti";
+        echo "<form action=\"include/systemtables_creation_script.php\" method=\"get\">";
+            echo "<input type=\"submit\" value=\"avvia creazione tabelle di sistema\">";
+        echo "</form>";
+        exit();
+    }
     $results = array();
     $i = 0;
     while($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
@@ -1000,6 +1007,18 @@ function get_resultset_from_id($id) {
     mysql_close($connection);
 
     return $res;
+}
+
+function import_file($filename, $connection){
+    if ($file = file_get_contents($filename)){
+        foreach(explode(";", $file) as $query){
+            $query = trim($query);
+            echo $query;
+            if (!empty($query) && $query != ";") {
+                mysql_query($query, $connection);
+            }
+        }
+    }
 }
 
 ?>
