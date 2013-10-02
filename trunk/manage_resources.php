@@ -397,9 +397,11 @@ while($arr_gr = mysql_fetch_array($res_grouping)) {
                     $resource_id = $resource->get_id();
                     $resource_type = $resource->get_type();
                     $resource_def = $resource->get_def();
+                    
                     if ($resource_def == '0000-00-00 00:00:00') {
 						$resource_def = null;
 					}
+					
                     $resource_header = $resource->get_header();
                     $resource_search = $resource->get_search();
                     $resource_grouping = $resource->get_grouping();
