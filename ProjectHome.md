@@ -1,0 +1,1 @@
+JARDiN Administrator is a PHP project for JARDiN administration and configuration
